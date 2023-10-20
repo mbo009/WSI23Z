@@ -1,32 +1,37 @@
-class mySolver():
+from solver import Solver
+from math import exp
 
-    def __init__(self, startingX=0, stepLen=0.001, precision=0.1, maxDepth=100):
-        self._startingX = startingX
+
+class mySolver(Solver):
+
+    def __init__(self, stepLen=0.001, precision=0.1, maxDepth=100):
         self._stepLen = stepLen
         self._maxDepth = maxDepth
         self._precision = precision
 
     def get_parameters(self):
-        return {"startingX": self._startingX,
-                "stepLen": self._stepLen}
+        return {"stepLen": self._stepLen,
+                "maxDepth": self._maxDepth,
+                "precision": self._precision}
 
-    def solve(self, f, fGradient, stepLen=0.1):
+    def solve(self, f, fGradient, x0):
         depth = 1
-        nextX = self._startingX
+        nextX = x0
 
         while (depth <= self._maxDepth):
 
             currentX = nextX
-            nextX = currentX - stepLen * fGradient(currentX)
+            for index in range(len(x0)):
+                nextX[index] = currentX[index] - self._stepLen * fGradient(currentX)[index]
 
-            if (abs(fGradient(currentX)) <= self._precision and abs(nextX - currentX) <= self._precision):
+            if (sum(abs(value) for value in fGradient(currentX)) <= self._precision and
+               any(abs(nextX[index] - currentX[index] <= self._precision) for index in range(len(x0)))):
                 return nextX
 
-            if (f(nextX) >= f(currentX)):
-                stepLen /= 2
+            # if (f(nextX) >= f(currentX)):
+            #     stepLen /= 2
 
             depth += 1
-
         return nextX
 
 
@@ -38,6 +43,16 @@ def fGradient(x):
     return pow(x, 3)
 
 
-solver = mySolver(0, 0.01, 0.01, 1000)
+def g(x):
+    return 1.5 - exp(-pow(x[0], 2) - pow(x[1], 2)) - 0.5 * exp(- pow(x[0] - 1, 2) - pow(x[1] + 2, 2))
 
-print(solver.solve(f, fGradient, 0.1))
+
+def gGradient(x):
+    return [2 * x[0] * exp(-pow(x[0], 2) - pow(x[1], 2)) + (x[0] - 1) * exp(- pow(x[0] - 1, 2) - pow(x[1] + 2, 2)),
+            2 * x[1] * exp(-pow(x[0], 2) - pow(x[1], 2)) + (x[1] - 1) * exp(- pow(x[0] - 1, 2) - pow(x[1] + 2, 2))]
+
+
+solver = mySolver(0.01, 1e-100, 100000)
+
+# print(solver.solve(f, fGradient, 1))
+print(solver.solve(g, gGradient, [6, 6]))
