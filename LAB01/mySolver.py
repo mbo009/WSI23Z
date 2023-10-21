@@ -26,7 +26,7 @@ class mySolver(Solver):
             fGradientValue = fGradient(currentX)
 
             for index in range(len(x0)):
-                nextX[index] = currentX[index] - stepLen * fGradientValue[index]
+                nextX[index] = (currentX[index] - stepLen * fGradientValue[index])
 
             if (sum(abs(value) for value in fGradientValue) <= self._precision or
                all(abs(nextX[index] - currentX[index]) <= self._precision for index in range(len(x0)))):
@@ -56,7 +56,7 @@ def gGradient(x):
             2 * x[1] * exp(-pow(x[0], 2) - pow(x[1], 2)) + (x[1] - 1) * exp(- pow(x[0] - 1, 2) - pow(x[1] + 2, 2))]
 
 
-solver = mySolver(0.5, 1e-10, 1000)
+solver = mySolver(0.01, 1e-30, 1e10)
 
-#print(solver.solve(f, fGradient, [-4]))
-print(solver.solve(g, gGradient, [4, 4]))
+# print(solver.solve(f, fGradient, [-4]))
+print(solver.solve(g, gGradient, [3.5, 3.5]))
