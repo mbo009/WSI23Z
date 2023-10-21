@@ -1,5 +1,6 @@
 from solver import Solver
 from math import exp
+from copy import copy
 
 
 class mySolver(Solver):
@@ -17,30 +18,33 @@ class mySolver(Solver):
     def solve(self, f, fGradient, x0):
         depth = 1
         nextX = x0
+        stepLen = copy(self._stepLen)
 
         while (depth <= self._maxDepth):
 
-            currentX = nextX
-            for index in range(len(x0)):
-                nextX[index] = currentX[index] - self._stepLen * fGradient(currentX)[index]
+            currentX = copy(nextX)
+            fGradientValue = fGradient(currentX)
 
-            if (sum(abs(value) for value in fGradient(currentX)) <= self._precision and
-               any(abs(nextX[index] - currentX[index] <= self._precision) for index in range(len(x0)))):
+            for index in range(len(x0)):
+                nextX[index] = currentX[index] - stepLen * fGradientValue[index]
+
+            if (sum(abs(value) for value in fGradientValue) <= self._precision or
+               all(abs(nextX[index] - currentX[index]) <= self._precision for index in range(len(x0)))):
                 return nextX
 
-            # if (f(nextX) >= f(currentX)):
-            #     stepLen /= 2
+            if (f(nextX) >= f(currentX)):
+                stepLen /= 2
 
             depth += 1
         return nextX
 
 
 def f(x):
-    return 1/4*pow(x, 4)
+    return 1/4*pow(x[0], 4)
 
 
 def fGradient(x):
-    return pow(x, 3)
+    return [pow(x[0], 3)]
 
 
 def g(x):
@@ -52,7 +56,7 @@ def gGradient(x):
             2 * x[1] * exp(-pow(x[0], 2) - pow(x[1], 2)) + (x[1] - 1) * exp(- pow(x[0] - 1, 2) - pow(x[1] + 2, 2))]
 
 
-solver = mySolver(0.01, 1e-100, 100000)
+solver = mySolver(0.5, 1e-10, 1000)
 
-# print(solver.solve(f, fGradient, 1))
-print(solver.solve(g, gGradient, [6, 6]))
+#print(solver.solve(f, fGradient, [-4]))
+print(solver.solve(g, gGradient, [4, 4]))
