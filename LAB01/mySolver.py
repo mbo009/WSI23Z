@@ -23,18 +23,17 @@ class mySolver(Solver):
             depth += 1
             currentX = copy(nextX)
             fGradientValue = fGradient(currentX)
-
             for index in range(len(x0)):
                 nextX[index] = (currentX[index] - stepLen * fGradientValue[index])
 
             if (sum(abs(value) for value in fGradientValue) <= self._precision or
                all(abs(nextX[index] - currentX[index]) <= self._precision for index in range(len(x0)))):
-                return nextX, depth
+                return [nextX, depth]
 
             if (f(nextX) >= f(currentX)):
-                stepLen /= 2
+                stepLen /= 64
 
-        return nextX, depth
+        return [nextX, depth]
 
 
 # solver = mySolver(0.1, 1e-30, 1e30)
