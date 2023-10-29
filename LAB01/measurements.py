@@ -3,24 +3,37 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from mySolver import mySolver
+# import functions
 
 
-def stepLenDependency(f, fGradient, precision, stepLen, maxDepth, x0):
+def stepLenDependency(f, fGradient, precision, stepLen,
+                      maxDepth, x0, multipleX=False):
 
     results = []
+    if multipleX is False:
+        x0 = [x0]
+
     for index in range(1000):
-        solverResult = mySolver(stepLen * (index + 1), precision, maxDepth).solve(f, fGradient, [x0])
+        solverResult = mySolver(stepLen * (index + 1), precision,
+                                maxDepth).solve(f, fGradient, x0)
+
         results.append(solverResult)
 
     return results
 
 
-def plt_accuracy(results, expectedValue, title, stepLen):
+def plt_accuracy(results, expectedValue, title, stepLen, multipleX=False):
     x = []
     y = []
     for index, result in enumerate(results):
         x.append(stepLen * (index + 1))
-        y.append(abs(expectedValue - result[0][0]))
+        if multipleX is True:
+            y.append(sum(abs(expectedValue[j] - result[0][j])
+                         for j in range(len(expectedValue))))
+
+        else:
+            y.append(abs(expectedValue - result[0][0]))
+
     plt.plot(x, y)
     plt.title(title)
     plt.xlabel("Długość kroku")
@@ -32,6 +45,7 @@ def plt_stepLen(results, title, stepLen):
     x = []
     y = []
     for index, result in enumerate(results):
+        # print(x, y, "\n")
         x.append(stepLen * (index + 1))
         y.append(result[1])
     plt.plot(x, y)
@@ -53,15 +67,28 @@ def plt_function(f, isGradient=False):
     plt.show()
 
 
-def randXMeasurements(f, fGradient, precision, stepLen, maxDepth, ammountRandX):
-    randX = random.uniform(-2.9, 2.9)
-    listX = [randX]
-    results = stepLenDependency(f, fGradient, precision, stepLen, maxDepth, randX)
+def randX(rangeX, ammountX):
+    if ammountX == 1:
+        return random.uniform(rangeX[0], rangeX[1])
+    else:
+        return [random.uniform(rangeX[0], rangeX[1]) for _ in range(ammountX)]
+
+
+def randXMeasurements(f, fGradient, precision, stepLen, maxDepth,
+                      ammountRandX, rangeX, ammountX=1):
+
+    drawnX = randX(rangeX, ammountX)
+    listX = [drawnX]
+    results = stepLenDependency(f, fGradient, precision, stepLen,
+                                maxDepth, drawnX, (ammountX > 1))
+
     for _ in range(ammountRandX - 1):
-        randX = random.uniform(-2.9, 2.9)
-        listX.append(randX)
-        result = stepLenDependency(f, fGradient, precision, stepLen, maxDepth, randX)
+        drawnX = randX(rangeX, ammountX)
+        listX.append(drawnX)
+        result = stepLenDependency(f, fGradient, precision, stepLen,
+                                   maxDepth, drawnX, (ammountX > 1))
         for index in range(1000):
-            results[index][0][0] += result[index][0][0]/10
+            results[index][0][0] += result[index][0][0]/ammountRandX
             results[index][1] += result[index][1]/ammountRandX
+
     return [results, listX]

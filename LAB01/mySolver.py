@@ -14,26 +14,30 @@ class mySolver(Solver):
                 "maxDepth": self._maxDepth,
                 "precision": self._precision}
 
-    def solve(self, f, fGradient, x0):
+    def solve(self, f, fGradient, x0, isReturningPath=False):
         depth = 1
-        nextX = x0
+        nextX = copy(x0)
+        path = [nextX]
         stepLen = copy(self._stepLen)
 
         while (depth <= self._maxDepth):
             depth += 1
             currentX = copy(nextX)
             fGradientValue = fGradient(currentX)
-            for index in range(len(x0)):
-                nextX[index] = (currentX[index] - stepLen * fGradientValue[index])
 
-            if (sum(abs(value) for value in fGradientValue) <= self._precision or
-               all(abs(nextX[index] - currentX[index]) <= self._precision for index in range(len(x0)))):
+            for index in range(len(x0)):
+                nextX[index] = (currentX[index]
+                                - stepLen * fGradientValue[index])
+
+            path.append(nextX)
+
+            if (sum(abs(value) for value in fGradientValue) <= self._precision
+                or all(abs(nextX[index] - currentX[index]) <= self._precision
+                       for index in range(len(x0)))):
+
                 return [nextX, depth]
 
             if (f(nextX) >= f(currentX)):
                 stepLen /= 64
 
-        return [nextX, depth]
-
-
-# solver = mySolver(0.1, 1e-30, 1e30)
+        return [nextX, depth, path] if isReturningPath else [nextX, depth]
