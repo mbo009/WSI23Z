@@ -17,7 +17,8 @@ class mySolver(Solver):
     def solve(self, f, fGradient, x0, isReturningPath=False):
         depth = 1
         nextX = copy(x0)
-        path = [nextX]
+        path = []
+        path.append([copy(nextX), [f(nextX)]])
         stepLen = copy(self._stepLen)
 
         while (depth <= self._maxDepth):
@@ -28,16 +29,15 @@ class mySolver(Solver):
             for index in range(len(x0)):
                 nextX[index] = (currentX[index]
                                 - stepLen * fGradientValue[index])
-
-            path.append(nextX)
+            if isReturningPath:
+                path.append([copy(nextX), [f(nextX)]])
 
             if (sum(abs(value) for value in fGradientValue) <= self._precision
                 or all(abs(nextX[index] - currentX[index]) <= self._precision
                        for index in range(len(x0)))):
-
-                return [nextX, depth]
+                return ([nextX, depth, path] if isReturningPath
+                        else [nextX, depth])
 
             if (f(nextX) >= f(currentX)):
                 stepLen /= 64
-
         return [nextX, depth, path] if isReturningPath else [nextX, depth]
