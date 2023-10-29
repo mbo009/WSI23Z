@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from mySolver import mySolver
-# import functions
 
 
 def stepLenDependency(f, fGradient, precision, stepLen,
@@ -34,7 +33,7 @@ def plt_accuracy(results, expectedValue, title, stepLen, multipleX=False):
         else:
             y.append(abs(expectedValue - result[0][0]))
 
-    plt.plot(x, y)
+    plt.scatter(x, y, s=1)
     plt.title(title)
     plt.xlabel("Długość kroku")
     plt.ylabel("Róźnica między wynikiem a wartością oczekiwaną")
@@ -45,10 +44,9 @@ def plt_stepLen(results, title, stepLen):
     x = []
     y = []
     for index, result in enumerate(results):
-        # print(x, y, "\n")
         x.append(stepLen * (index + 1))
         y.append(result[1])
-    plt.plot(x, y)
+    plt.scatter(x, y, s=1)
     plt.title(title)
     plt.xlabel("Długość kroku")
     plt.ylabel("Ilość kroków")
