@@ -82,12 +82,10 @@ def plt_function3D(f, additionalPoints=None, pointsColors=None,
     x1, x2 = np.meshgrid(x1, x2)
     y = np.zeros_like(x1)
 
-    # Calculate the function values for each point in the grid
     for i in range(x1.shape[0]):
         for j in range(x1.shape[1]):
             y[i, j] = f([x1[i, j], x2[i, j]])
 
-    # Create a 3D plot
     figure = plt.figure()
     plot = figure.add_subplot(111, projection='3d')
     plot.plot_surface(x1, x2, y, cmap=pltCmap, alpha=visibility)
@@ -100,7 +98,6 @@ def plt_function3D(f, additionalPoints=None, pointsColors=None,
                          c=pointsColors[index % len(pointsColors)],
                          s=100, label=f"x1, x2 = {additionalX[0]}")
 
-    # Set labels and title
     plot.set_xlabel('x1')
     plot.set_ylabel('x2')
     plot.set_zlabel('g(x1, x2)')
