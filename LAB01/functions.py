@@ -1,19 +1,20 @@
 from math import exp
 
-
+'''
 def hPreciPow(x, power):
     result = 1
     for _ in range(power):
         result *= x
     return result
+'''
 
 
 def f(x):
-    return 1/4*hPreciPow(x[0], 4)
+    return 1/4*pow(x[0], 4)
 
 
 def fGradient(x):
-    return [hPreciPow(x[0], 3)]
+    return [pow(x[0], 3)]
 
 
 def g(x):
