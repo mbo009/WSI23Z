@@ -12,7 +12,7 @@ class geneticAlgorithm:
         self._successPos = successPos
         self._successAcc = successAcc
 
-    def get_parameters(self):
+    def getParameters(self):
         return {"itMax": self._itMax,
                 "probCross": self._probCross,
                 "probMut": self._probMut,
@@ -33,6 +33,10 @@ class geneticAlgorithm:
             else:
                 score = self._evalFail
 
-            output.append(unit, score)
+            output.append(score)
 
         return output
+
+    def findBest(self, population, scores):
+        index = scores.index(min(scores))
+        return population[index], scores[index]
