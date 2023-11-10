@@ -2,8 +2,8 @@ import random
 
 
 class gaSolver:
-    def __init__(self, itMax=200, probCross=0.1,
-                 probMut=0.1, populationSize=100,
+    def __init__(self, itMax=1000, probCross=0.01,
+                 probMut=0.01, populationSize=100,
                  unitSize=200, scalingConstant=1201):
         self._itMax = itMax
         self._probCross = probCross
@@ -21,11 +21,11 @@ class gaSolver:
                 }
 
     def evaluation(self, f, population):
-        output = []
+        scores = []
         for unit in population:
-            output.append(f(unit))
+            scores.append(f(unit))
 
-        return output
+        return scores
 
     def findBest(self, population, scores):
         index = scores.index(max(scores))
@@ -35,26 +35,81 @@ class gaSolver:
         population = []
         for _ in range(self._populationSize):
             population.append("".join(random.choice("01") for _ in range(self._unitSize)))
+        return population
 
     def selection(self, population, scores):
         probIntervals = []
         newPopulation = []
         lastScore = 0
+
         for score in scores:
             probIntervals.append(score + self._scalingConstant + lastScore)
             lastScore += score + self._scalingConstant
 
-        for _ in range(population):
+        for _ in range(len(population)):
             drawnNum = random.randint(0, lastScore)
             leftEnd = probIntervals[0]
 
-            if drawnNum < leftEnd:
+            if drawnNum <= leftEnd:
                 newPopulation.append(population[0])
             else:
-                for i in range(1, population):
-                    if leftEnd > drawnNum and probIntervals[i] <= drawnNum:
+                for i in range(1, len(population)):
+                    if drawnNum > leftEnd and drawnNum <= probIntervals[i]:
                         newPopulation.append(population[i])
+                        break
+                    leftEnd = probIntervals[i]
+
         return newPopulation
 
     def mutation(self, population):
-        pass
+        mutatedPopulation = []
+
+        for unit in population:
+            mutatedUnit = ""
+            for index in range(self._unitSize):
+                drawnNum = random.random()
+                if drawnNum < self._probMut:
+                    mutatedUnit += "1" if unit[index] == "0" else "0"
+                else:
+                    mutatedUnit += unit[index]
+            mutatedPopulation.append(mutatedUnit)
+
+        return mutatedPopulation
+
+    def crossing(self, population):
+        newPopulation = []
+        pairFormed = False
+        leftUnit = ""
+
+        for unit in population:
+            if pairFormed:
+                drawnPoint = random.randint(1, self._unitSize - 2)
+                newPopulation.append(leftUnit[:drawnPoint] + unit[drawnPoint:])
+                newPopulation.append(unit[:drawnPoint] + leftUnit[drawnPoint:])
+            else:
+                leftUnit = unit
+
+            pairFormed = not pairFormed
+
+        return newPopulation
+
+    def solve(self, problem, pop0):
+        t = 0
+        scores = self.evaluation(problem, pop0)
+        bestUnit, bestScore = self.findBest(pop0, scores)
+        population = pop0
+
+        while t < self._itMax:
+            selectedPop = self.selection(population, scores)
+            mutatedPop = self.mutation(self.crossing(selectedPop))
+            scores = self.evaluation(problem, mutatedPop)
+
+            newBestUnit, newBestScore = self.findBest(mutatedPop, scores)
+            if newBestScore > bestScore:
+                bestScore = newBestScore
+                bestUnit = newBestUnit
+
+            population = mutatedPop
+            t += 1
+
+        return bestUnit, bestScore
