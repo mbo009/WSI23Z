@@ -1,5 +1,6 @@
-def rocketLanding(unitMoves, baseMass=200, position=200, accParam=40, deAccParam=0.09,
-                  successPos=2, successAcc=2, successPoints=2000, failPoints=-1000):
+def rocketLanding(unitMoves, baseMass=200, position=200, accParam=40,
+                  deAccParam=0.09, successPos=2, successAcc=2,
+                  successPoints=2000, failPoints=-1000):
     # acceleration
     acc = 0
     # base rocket + fuel mass

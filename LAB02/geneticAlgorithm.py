@@ -93,7 +93,10 @@ class gaSolver:
 
         return newPopulation
 
-    def solve(self, problem, pop0):
+    def solve(self, problem, pop0, returnBSHistory=False):
+        if returnBSHistory:
+            bestScoreHistory = []
+
         t = 0
         scores = self.evaluation(problem, pop0)
         bestUnit, bestScore = self.findBest(pop0, scores)
@@ -109,7 +112,12 @@ class gaSolver:
                 bestScore = newBestScore
                 bestUnit = newBestUnit
 
+            if returnBSHistory:
+                bestScoreHistory.append(newBestScore)
+
             population = mutatedPop
             t += 1
 
+        if bestScoreHistory:
+            return bestUnit, bestScore, bestScoreHistory
         return bestUnit, bestScore
