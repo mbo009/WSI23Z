@@ -32,9 +32,9 @@ def plotHistories(histories, paramsArray, colorsArray,
                 values.append(itScore)
 
         plt.scatter(x, y, c=colorsArray[i], s=2,
-                    label=f'Crossing prob: {paramsArray[i][0]}, ' +
-                          f'Mutation prob: {paramsArray[i][1]}, ' +
-                          f'Pop size: {paramsArray[i][2]}')
+                    label=f'CrossProb: {paramsArray[i][0]}, ' +
+                          f'MutProb: {paramsArray[i][1]}, ' +
+                          f'PopSize: {paramsArray[i][2]}')
         if addLines:
             plt.plot(x, y, c=colorsArray[i], linestyle='--',
                      linewidth=0.5, alpha=0.5)
@@ -43,7 +43,7 @@ def plotHistories(histories, paramsArray, colorsArray,
 
     plt.xlabel("Iteration")
     plt.ylabel("Score")
-    plt.legend(prop={'size': 7})
+    plt.legend(prop={'size': 4})
     plt.title(title)
 
     # Zoom state tells us:
