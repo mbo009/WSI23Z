@@ -4,16 +4,30 @@ from rocketLanding import rocketLanding
 from geneticAlgorithm import gaSolver
 
 
-def getSolverHistories(paramsArray, itMax):
+def getSolverHistories(paramsArray, itMax, numOfStarts=25):
     avgHist = []
-    bestScoreHist = []
+    BSHist = []
+    currentBSHist = []
+    currentAvgHist = []
+    bestScores = []
+    currentBestScores = []
+
     for params in paramsArray:
-        solver = gaSolver(itMax, params[0],
-                          params[1], params[2])
-        data = solver.solve(rocketLanding, solver.populationInit(), True, True)
-        bestScoreHist.append(data[2])
-        avgHist.append(data[3])
-    return bestScoreHist, avgHist
+        for _ in range(numOfStarts):
+            solver = gaSolver(itMax, params[0],
+                              params[1], params[2])
+            data = solver.solve(rocketLanding, solver.populationInit(),
+                                True, True)
+            currentBSHist.append(data[2])
+            currentAvgHist.append(data[3])
+            currentBestScores.append(data[1])
+        BSHist.append([sum(x) / numOfStarts for x in zip(*currentBSHist)])
+        avgHist.append([sum(x) / numOfStarts for x in zip(*currentAvgHist)])
+        bestScores.append(sum(currentBestScores) / numOfStarts)
+        currentBSHist.clear()
+        currentAvgHist.clear()
+        currentBestScores.clear()
+    return BSHist, avgHist, bestScores
 
 
 def plotHistories(histories, paramsArray, colorsArray,

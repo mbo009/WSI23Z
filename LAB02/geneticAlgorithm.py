@@ -83,7 +83,11 @@ class gaSolver:
 
         for unit in population:
             if pairFormed:
-                drawnPoint = random.randint(1, self._unitSize - 2)
+                drawnNum = random.random()
+                if drawnNum < self._probCross:
+                    drawnPoint = random.randint(1, self._unitSize - 2)
+                else:
+                    drawnPoint = self._unitSize
                 newPopulation.append(leftUnit[:drawnPoint] + unit[drawnPoint:])
                 newPopulation.append(unit[:drawnPoint] + leftUnit[drawnPoint:])
             else:
