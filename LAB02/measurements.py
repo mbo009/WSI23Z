@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 from rocketLanding import rocketLanding
-from geneticAlgorithm import gaSolver
+from gaSolver import gaSolver
 
 
 def getSolverHistories(paramsArray, itMax, numOfStarts=25):

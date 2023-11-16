@@ -1,7 +1,8 @@
 import random
+from solver import Solver
 
 
-class gaSolver:
+class gaSolver(Solver):
     def __init__(self, itMax=1000, probCross=0.01,
                  probMut=0.01, populationSize=100,
                  unitSize=200, scalingConstant=1201):
@@ -34,7 +35,8 @@ class gaSolver:
     def populationInit(self):
         population = []
         for _ in range(self._populationSize):
-            population.append("".join(random.choice("01") for _ in range(self._unitSize)))
+            population.append("".join(
+                random.choice("01") for _ in range(self._unitSize)))
         return population
 
     def selection(self, population, scores):
