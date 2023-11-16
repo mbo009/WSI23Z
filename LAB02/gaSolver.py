@@ -13,7 +13,7 @@ class gaSolver(Solver):
         self._unitSize = unitSize
         self._scalingConstant = scalingConstant
 
-    def getParameters(self):
+    def get_parameters(self):
         return {"itMax": self._itMax,
                 "probCross": self._probCross,
                 "probMut": self._probMut,
