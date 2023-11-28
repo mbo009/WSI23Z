@@ -2,6 +2,7 @@ from two_player_games.games.connect_four import ConnectFour
 from solver import miniMax
 from connectFourNode import ConnectFourNode
 from random import choice
+import matplotlib.pyplot as plt
 
 
 def simulateGame(pOneParam=None, pTwoParam=None, mapSize=(7, 6)):
@@ -53,9 +54,53 @@ def simulateMultipleGames(gameCount, pOneParam, pTwoParam, mapSize=(7, 6)):
         if winner:
             if winner.char == '1':
                 winsPlayerOne += 1
-            else:
-                draws += 1
+        else:
+            draws += 1
     return winsPlayerOne, gameCount - winsPlayerOne - draws, draws
+
+
+def analyzeMovesQuality(depth, mapSize=(6, 7)):
+    game = ConnectFour(mapSize)
+    quality = [[] for _ in range(depth)]
+    moves = [[] for _ in range(depth)]
+    while not game.is_finished():
+        node = ConnectFourNode(game.state)
+        if node.currentPlayer() == 1:
+            for i in range(depth):
+                minimaxData = miniMax(node, i+1, 1)
+                quality[i].append(minimaxData[0])
+                moves[i].append(minimaxData[1])
+            move = moves[depth-1]
+        else:
+            move = miniMax(node, depth, 1)[1]
+        game.make_move(move)
+    return quality
+
+
+def pltMoveValues(moveValuesArr, colorsArray, title,
+                  addLines=False, indexShift=0):
+    x = []
+    y = []
+    firstIt = True
+    for i, moveValues in enumerate(moveValuesArr):
+        for j, value in enumerate(moveValues):
+            if firstIt:
+                x.append(j)
+            y.append(value)
+
+        plt.scatter(x, y, c=colorsArray[i], s=5,
+                    label=f'Depth: {i + 1 + indexShift}')
+        if addLines:
+            plt.plot(x, y, c=colorsArray[i], linestyle='--',
+                     linewidth=1, alpha=0.5)
+        y.clear()
+        firstIt = False
+
+    plt.xlabel("Move number")
+    plt.ylabel("Score")
+    plt.title(title)
+    plt.legend()
+    plt.show()
 
 
 # print(simulateMultipleGames(1, [False, 3, 0, 20], [True, 3, 0, 20]))
