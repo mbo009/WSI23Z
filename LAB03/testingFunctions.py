@@ -3,6 +3,7 @@ from solver import miniMax
 from connectFourNode import ConnectFourNode
 from random import choice
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 def simulateGame(pOneParam=None, pTwoParam=None, mapSize=(7, 6)):
@@ -70,11 +71,11 @@ def analyzeMovesQuality(depth, mapSize=(6, 7)):
                 minimaxData = miniMax(node, i+1, 1)
                 quality[i].append(minimaxData[0])
                 moves[i].append(minimaxData[1])
-            move = moves[depth-1]
+            move = moves[depth-1][-1]
         else:
             move = miniMax(node, depth, 1)[1]
         game.make_move(move)
-    return quality
+    return quality, moves
 
 
 def pltMoveValues(moveValuesArr, colorsArray, title,
@@ -102,5 +103,31 @@ def pltMoveValues(moveValuesArr, colorsArray, title,
     plt.legend()
     plt.show()
 
+
+def prepareMovesTable(movesArr):
+    rows = []
+    for i in range(len(movesArr[0])):
+        data = []
+        for j in range(len(movesArr)):
+            data.append(movesArr[j][i].column)
+        rows.append(data)
+
+    columns = pd.DataFrame([
+                        ["Moves picked by minimax with depth:", 1],
+                        ["Moves picked by minimax with depth:", 2],
+                        ["Moves picked by minimax with depth:", 3],
+                        ["Moves picked by minimax with depth:", 4],
+                        ["Moves picked by minimax with depth:", 5],
+                        ["Moves picked by minimax with depth:", 6]],
+                        columns=["Iteration", ""])
+    columns = pd.MultiIndex.from_frame(columns)
+
+    df = pd.DataFrame(rows, columns=columns)
+    df.index = df.index + 1
+    df = df.style.set_table_styles([
+        {'selector': 'td', 'props': [('text-align', 'center')]},
+        {'selector': 'th', 'props': [('text-align', 'center')]}
+    ])
+    return df
 
 # print(simulateMultipleGames(1, [False, 3, 0, 20], [True, 3, 0, 20]))
