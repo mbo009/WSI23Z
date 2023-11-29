@@ -1,5 +1,5 @@
 from two_player_games.games.connect_four import ConnectFour
-from solver import miniMax
+from miniMax import miniMax
 from connectFourNode import ConnectFourNode
 from random import choice
 import matplotlib.pyplot as plt
