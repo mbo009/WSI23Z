@@ -47,13 +47,20 @@ def playAgainstBot(botParam, mapSize=(7, 6)):
         print('Winner: Player ' + winner.char)
 
 
-def simulateMultipleGames(gameCount, pOneParam, pTwoParam, mapSize=(7, 6)):
+def simulateMultipleGames(gameCount, pOneParam, pTwoParam,
+                          turns=False, mapSize=(7, 6)):
     winsPlayerOne = 0
     draws = 0
-    for _ in range(gameCount):
-        winner = simulateGame(pOneParam, pTwoParam, mapSize)
+    for i in range(gameCount):
+        if turns and i % 2 == 1:
+            winner = simulateGame(pTwoParam, pOneParam, mapSize)
+        else:
+            winner = simulateGame(pOneParam, pTwoParam, mapSize)
         if winner:
-            if winner.char == '1':
+            if turns and i % 2 == 1:
+                if winner.char == '2':
+                    winsPlayerOne += 1
+            elif winner.char == '1':
                 winsPlayerOne += 1
         else:
             draws += 1
@@ -129,5 +136,3 @@ def prepareMovesTable(movesArr):
         {'selector': 'th', 'props': [('text-align', 'center')]}
     ])
     return df
-
-# print(simulateMultipleGames(1, [False, 3, 0, 20], [True, 3, 0, 20]))

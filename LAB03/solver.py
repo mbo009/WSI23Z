@@ -39,8 +39,4 @@ def miniMax(node: Node, depth: int, maximizingPlayer: int,
             if value <= a:
                 break
 
-    # movesPrint = []
-    # for move in bestMoves:
-    #     movesPrint.append(move.column)
-    # print(movesPrint)
     return value, choice(bestMoves)
