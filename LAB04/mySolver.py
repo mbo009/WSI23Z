@@ -1,11 +1,10 @@
 from solver import Solver
 from id3Node import ID3Node
 import numpy as np
-import math
 
 
 class MySolver(Solver):
-    def __init__(self, minSampleLimit=2, depthLimit=2, root=None):
+    def __init__(self, depthLimit=2, minSampleLimit=2, root=None):
         self._minSampleLimit = minSampleLimit
         self._depthLimit = depthLimit
         self.root = root
@@ -31,7 +30,7 @@ class MySolver(Solver):
         entropy = 0
         for value in values:
             prob = y.count(value) / len(y)
-            entropy += -prob * math.log(prob, 2)
+            entropy += -prob * np.log2(prob)
         return entropy
 
     def _infGain(self, parentY, leftY, rightY):
