@@ -23,29 +23,41 @@ def dataDiscretization(data):
     return output
 
 
-def getDepthAccuracy(depthLimit, X, Y):
-    trainX, testX, trainY, testY = tts(X, Y, test_size=0.2)
-    output = []
+def getDepthAccuracy(depthLimit, X, Y, seed,
+                     returnTraining=False, testSize=0.2):
+    trainX, testX, trainY, testY = tts(X, Y, test_size=testSize,
+                                       random_state=seed)
+    predicted = []
+    predictedTrain = []
     for i in range(1, depthLimit + 1):
         solver = MySolver(i)
         solver.fit(trainX, trainY)
-        predicted = solver.predict(testX)
-        output.append(countCorrect(predicted, testY))
-    return output
+        predicted.append(countCorrect(solver.predict(testX), testY))
+        if returnTraining:
+            predictedTrain.append(countCorrect(solver.predict(trainX), trainY))
+
+    return [predicted, predictedTrain]
 
 
-def pltAccuracy(data):
+def pltAccuracy(dataArr, labels=["Testing dataset", "Training dataset"],
+                colorsArray=['red', 'blue']):
     x = []
     y = []
-    for i, acc in enumerate(data):
-        x.append(i + 1)
-        y.append(acc)
+    firstIt = True
+    for i, data in enumerate(dataArr):
+        for j, acc in enumerate(data):
+            if firstIt:
+                x.append(j + 1)
+            y.append(acc)
+        plt.scatter(x, y, s=5, c=colorsArray[i], label=labels[i])
+        plt.plot(x, y, linestyle="--", c="gray", linewidth=1, alpha=0.6)
+        y.clear()
+        firstIt = False
 
-    plt.scatter(x, y, s=5, c="red")
-    plt.plot(x, y, linestyle="--", c="gray", linewidth=1, alpha=0.6)
     plt.xlabel("Depth")
     plt.ylabel("Accuracy in %")
     plt.title("Predicting accuracy for diffrent maximal depths")
+    plt.legend()
     plt.show()
 
 
