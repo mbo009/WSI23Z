@@ -1,5 +1,6 @@
 from solver import Solver
 from id3Node import ID3Node
+from notEnoughColumns import NotEnoughColumns
 import numpy as np
 
 
@@ -42,7 +43,7 @@ class MySolver(Solver):
             - weightRight * self._entropy(rightY)
         )
 
-    def _best_split(self, X, Y, sampleCount, columnsCount):
+    def _best_split(self, X, Y, columnsCount):
         bestSplit = ID3Node()
         maxInfGain = float("-inf")
         for index in range(columnsCount):
@@ -63,9 +64,9 @@ class MySolver(Solver):
         return bestSplit
 
     def buildTree(self, X, y, currentDepth=0):
-        sampleCount, columnsCount = np.shape(X)
+        columnsCount = np.shape(X)[1]
         if currentDepth <= self._depthLimit:
-            bestSplit = self._best_split(X, y, sampleCount, columnsCount)
+            bestSplit = self._best_split(X, y, columnsCount)
             if bestSplit.infGain > 0:
                 left = self.buildTree(
                     bestSplit.left[0], bestSplit.left[1], currentDepth + 1
@@ -88,7 +89,10 @@ class MySolver(Solver):
     def makePrediction(self, X, tree):
         if tree.value is not None:
             return tree.value
-        featureValue = X[tree.featureIndex]
+        try:
+            featureValue = X[tree.featureIndex]
+        except IndexError:
+            raise NotEnoughColumns
         if featureValue <= tree.threshold:
             return self.makePrediction(X, tree.left)
         else:

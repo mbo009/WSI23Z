@@ -3,6 +3,7 @@ from mySolver import MySolver
 from copy import deepcopy
 from sklearn.model_selection import train_test_split as tts
 import matplotlib.pyplot as plt
+import random
 
 
 def readCSV(filePath):
@@ -10,6 +11,36 @@ def readCSV(filePath):
     X = df.drop(["id", "cardio"], axis=1).values.tolist()
     Y = df["cardio"].values.tolist()
     return X, Y
+
+
+def checkAccuracy(X, Y, depth, rangeL, rangeR):
+    output = []
+    solver = MySolver(depth)
+    solver.fit(X, Y)
+    x = deepcopy(X)
+    for i in range(rangeL, rangeR):
+        if i > 0:
+            x = addRandData(X, i)
+        elif i < 0:
+            x = cutData(X, -i)
+        output.append(countCorrect(solver.predict(x), Y))
+    return output
+
+
+def addRandData(data, addColCount):
+    output = []
+    for line in data:
+        newLine = line + [random.randint(1, 10) for _ in range(addColCount)]
+        output.append(newLine)
+    return output
+
+
+def cutData(data, rmColCount):
+    output = []
+    for line in data:
+        newLine = line[:-rmColCount]
+        output.append(newLine)
+    return output
 
 
 def dataDiscretization(data):
@@ -23,10 +54,8 @@ def dataDiscretization(data):
     return output
 
 
-def getDepthAccuracy(depthLimit, X, Y, seed,
-                     returnTraining=False, testSize=0.2):
-    trainX, testX, trainY, testY = tts(X, Y, test_size=testSize,
-                                       random_state=seed)
+def getDepthAccuracy(depthLimit, X, Y, seed, returnTraining=False, testSize=0.2):
+    trainX, testX, trainY, testY = tts(X, Y, test_size=testSize, random_state=seed)
     predicted = []
     predictedTrain = []
     for i in range(1, depthLimit + 1):
@@ -39,8 +68,9 @@ def getDepthAccuracy(depthLimit, X, Y, seed,
     return [predicted, predictedTrain]
 
 
-def pltAccuracy(dataArr, labels=["Testing dataset", "Training dataset"],
-                colorsArray=['red', 'blue']):
+def pltAccuracy(
+    dataArr, labels=["Testing dataset", "Training dataset"], colorsArray=["red", "blue"]
+):
     x = []
     y = []
     firstIt = True
