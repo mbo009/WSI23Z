@@ -47,7 +47,7 @@ class MySolver(Solver):
         bestSplit = ID3Node()
         maxInfGain = float("-inf")
         for index in range(columnsCount):
-            values = list(set(row[index] for row in X))
+            values = list(set(row[index] for row in X if row[index] is not None))
             for i, value in enumerate(values):
                 left, right = self._split(X, Y, index, value)
                 if len(left) > 0 and len(right) > 0:
