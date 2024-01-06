@@ -60,12 +60,3 @@ def plt_rewards(
     plt.ylabel(ylabel)
     plt.title(title)
     plt.show()
-
-
-# env = gymnasium.make("Taxi-v3")
-# solver = QLearningSolver()
-# QTable, rewards = solver.solve(env)
-# for reward in rewards:
-#     print(reward)
-# env = gymnasium.make("Taxi-v3", render_mode="human")
-# play(env, QTable, 1000)
