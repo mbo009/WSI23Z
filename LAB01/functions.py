@@ -8,6 +8,7 @@ def hPreciPow(x, power):
     return result
 '''
 
+
 def f(x):
     return 1/4*pow(x[0], 4)
 

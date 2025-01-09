@@ -4,15 +4,17 @@ from copy import copy
 
 class mySolver(Solver):
 
-    def __init__(self, stepLen=0.001, precision=0.1, maxDepth=100):
+    def __init__(self, stepLen=0.001, precision=0.1, maxDepth=100, modulationRate=64):
         self._stepLen = stepLen
         self._maxDepth = maxDepth
         self._precision = precision
+        self._modulationRate = modulationRate
 
     def get_parameters(self):
         return {"stepLen": self._stepLen,
                 "maxDepth": self._maxDepth,
-                "precision": self._precision}
+                "precision": self._precision,
+                "modulationRate": self._modulationRate}
 
     def solve(self, f, fGradient, x0, isReturningPath=False):
         depth = 1
@@ -39,5 +41,5 @@ class mySolver(Solver):
                         else [nextX, depth])
 
             if (f(nextX) >= f(currentX)):
-                stepLen /= 64
+                stepLen /= self.modulationRate
         return [nextX, depth, path] if isReturningPath else [nextX, depth]
